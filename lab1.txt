@@ -1,0 +1,124 @@
+1) 
+/////////////////////////
+create table Reports (
+	Reg_no number(4) primary key,
+	Book_No number(4),
+	user_id number(4),
+	Issue_Date Date,
+	Return_Date Date
+);
+
+create table staff(
+	staff_id number(4) primary key,
+	name varchar2(20)
+);
+
+create table AuthenticationSystem (
+	LoginId number(4) primary key,
+	Password number(10) 
+);
+
+
+create table Publisher (
+	Publisher_id number primary keu,
+	YearOfPublication Date,
+	name varchar2(20)
+);
+
+create table Books(
+	ISBN number(10) primary key,
+	Title varchar2(10) ,
+	Edition number(20),
+	Category varchar2(20),
+	Price number(8),
+	AuthNo number(10)
+);
+create table Reader(
+	user_id number primary key,
+	first_name varchar2(40),
+	last_Name varchar2(40),
+	email varchar2(40),
+	address varchar2(20),
+	phone number(11)
+);
+create table KeepsTrackOf( 
+	staff_Id number ,
+	User_Id number ,
+	constraint track_id primary key(staff_Id, User_Id)
+);
+
+create table Login (
+	staff_id number(4) primary key,
+	user_Id number(4)
+);
+
+create table Manages(
+	Reg_No number(8) primary key,
+	Staff_id number(4)
+);
+create table publishes(
+	publisher_id number primary key,
+	ISBN number 
+);
+
+create table reserve(
+	return_date Date,
+	ISBN number(10),	
+	ReserveCode number(10), 
+	constraint reserve_id primary key(ISBN, ReserveCode)
+);	
+create table maintain (
+	ISBN number (10) primary key,
+	staff_id number(4)
+);
+	
+/////////////////////////////////////////////////////////////////////////////
+
+2)
+
+create table Readers(
+		User_ID varchar2(10) primary key,
+		Email varchar2(20) Unique,
+		FirstName Varchar2(20),
+		LastName varchar2(10),
+		Phone_No number(10,3) DEFAULT  0,
+		Address varchar2(5));
+
+create table Books1(
+	ISBN varchar2(10) primary key,
+	Title varchar2(20),
+	Edition number(2),
+	Category varchar2(20),
+	Price number(8),
+	AuthNo number(5));
+
+create table Return (
+	issue_date Date,
+	return_date Date,
+	Due_date Date,
+	reserve_date Date,
+	User_ID varchar2(10),
+	ISBN varchar2(10),
+	constraint date_pk primary key(reserve_date,User_ID),
+	constraint isbn_fk foreign key(ISBN) REFERENCES Books1(ISBN));
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+3) 
+
+a) ALTER TABLE Return ADD Fine Number(10);
+
+ALTER TABLE Return
+MODIFY Fine DEFAULT 0;
+
+
+b)
+ALTER TABLE Books1 ADD Currently_Available_Copies Number(20);
+
+c)
+ALTER TABLE Readers MODIFY LastName varchar2(20);
+d)
+ALTER TABLE Reports MODIFY user_id varchar2(10);
+d)ALTER TABLE Reports ADD CONSTRAINT user_fk foreign key(user_id) references Readers(User_ID);
+e) SELECT  table_name FROM USER_TABLES;
+f) DROP TABLE maintain;
