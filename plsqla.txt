@@ -1,0 +1,87 @@
+ create schema authorization u2203085;
+set serveroutput on
+declare
+	x number;
+	c number;
+	fact number;
+begin
+	x:=&x;
+	fact:=1;
+	c:=x;
+	while c>0 loop
+		fact:=fact*c;
+		c:=c-1;
+	end loop;
+	dbms_output.put_line('Factorial Of '||x||' is '||fact);
+end;
+/		
+
+
+
+DECLARE
+    str1  VARCHAR2(30):='&str1';
+    str2  VARCHAR2(30);
+    str_length INTEGER;
+BEGIN
+  
+    str2 := '';
+    str_length := LENGTH(str1);
+    
+    
+    FOR i IN REVERSE 1..str_length LOOP
+    	
+        str2 := str2 || SUBSTR(str1, i, 1);
+    END LOOP;
+
+    DBMS_OUTPUT.PUT_LINE('Original String: ' || str1);
+    DBMS_OUTPUT.PUT_LINE('Reversed String: ' || str2);
+END;
+/
+///////////////////////////////////////////////////////
+create table areas(
+ radius int,
+ area numeric(10,4)
+);
+
+DECLARE
+rad number;
+a number;
+BEGIN
+FOR rad in 5..15 LOOP
+ a:=3.14*rad*rad;
+ insert into areas values(rad,a);
+END LOOP;
+
+END;
+/
+
+
+//////////////////////////////////////////////////
+create table accounts
+(
+ accno int primary key,
+ bal number
+);
+
+
+///////////////////////////////////////////
+declare
+	acc integer:=&acc;
+	bal1 float;
+begin
+	select bal into bal1 from accounts where accno=acc;
+	if bal1<1000 then
+		dbms_output.put_line('Current Balance:'||bal1);
+		dbms_output.put_line('below minimum  balance! 100/- Fine deducted');
+		bal1:=bal1-100;
+		update accounts set bal=bal1 where accno=acc;
+		dbms_output.put_line('New Balance: '||bal1);
+	else
+		dbms_output.put_line('current balance: '||bal1);
+		end if;
+	exception
+	when no_data_found THEN
+		dbms_output.put_line('no such account exist!');
+	end;
+	/
+		
