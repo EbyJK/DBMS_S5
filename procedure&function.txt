@@ -1,0 +1,88 @@
+CREATE OR REPLACE PROCEDURE fine_updt(id IN VARCHAR2)
+AS 
+fine1 number;
+22 a)
+
+BEGIN
+ select fine into fine1 from readers where user_id=id;
+if fine1>100 then
+	update readers set fine= fine- (0.05*fine) where user_id=id;
+end if;
+end;
+/
+
+/////
+BEGIN
+ fine_updt('L0001');
+END;
+/
+/////
+
+22 b)
+//////////////
+ALTER TABLE return add  return_status varchar2(30);
+
+/////
+
+CREATE OR REPLACE PROCEDURE status (id IN VARCHAR2)
+AS
+
+BEGIN 
+ update return set return_status='not returned' where return_date is null and due_date <(select sysdate from dual);
+END;
+
+
+//////////////
+
+BEGIN
+status('L0006');
+END;
+/
+/////
+
+22 c)
+
+////
+CREATE OR REPLACE FUNCTION copy (auth IN VARCHAR2)
+return varchar2
+IS
+n integer;
+BEGIN
+select sum (currently_available_copies) into n from books1 where 
+AUTHNO= auth group by AUTHNO;
+RETURN('NUmber of copies:'||n);
+END;
+
+/////
+
+DECLARE
+ n varchar2(30);
+BEGIN
+	n:=copy ('A005');
+	dbms_output.put_line(n);
+END;
+/
+
+////////////////
+
+22 d)
+
+CREATE OR REPLACE FUNCTION ret_date
+(U in varchar2)
+RETURN DATE
+IS
+D date;
+BEGIN
+select return_date into D from return where user_id = U and return_date is not null;
+RETURN D;
+END;
+
+///////
+DECLARE 
+ n varchar2 (30);
+D date;
+BEGIN
+D:=ret_date(&n);
+dbms_output.put_line('Return date:'||D);
+END;
+///////////////////
