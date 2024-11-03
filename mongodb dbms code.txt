@@ -1,0 +1,50 @@
+
+ 33)MongoDB
+
+use myDatabase
+
+db.createCollection("customer")
+
+1) db.customer.insertMany([
+   { customer_id: 1, customer_name: "Alice", age: 30, gender: "F", Product: "A", amount: 150 },
+   { customer_id: 2, customer_name: "Bob", age: 45, gender: "M", Product: "B", amount: 200 },
+   { customer_id: 3, customer_name: "Charlie", age: 22, gender: "M", Product: "A", amount: 100 },
+   { customer_id: 4, customer_name: "Diana", age: 35, gender: "F", Product: "C", amount: 250 },
+   { customer_id: 5, customer_name: "Ethan", age: 50, gender: "M", Product: "B", amount: 300 },
+   { customer_id: 6, customer_name: "Fiona", age: 24, gender: "F", Product: "A", amount: 180 },
+   { customer_id: 7, customer_name: "George", age: 41, gender: "M", Product: "C", amount: 130 },
+   { customer_id: 8, customer_name: "Hannah", age: 20, gender: "F", Product: "B", amount: 160 },
+   { customer_id: 9, customer_name: "Ian", age: 38, gender: "M", Product: "A", amount: 220 },
+   { customer_id: 10, customer_name: "Rohan", age: 29, gender: "M", Product: "B", amount: 110 }
+])
+
+
+2) db.customer.find().pretty()
+
+3)
+db.customer.find({ age: { $gt: 40 } }).pretty()
+
+4)
+db.customer.find({ age: { $lt: 25 }, gender: "F" }).pretty()
+
+5)
+db.customer.updateMany(
+   { Product: "B" },
+   { $set: { quantity: ["10", "11"] } }
+)
+
+6)
+
+db.customer.updateOne(
+   { customer_name: "Rohan" },
+   { $set: { customer_name: "Ronald" } }
+)
+
+7)
+db.customer.deleteMany({ gender: "F", Product: "A" })
+
+8)
+db.customer.deleteMany({})
+
+
+
