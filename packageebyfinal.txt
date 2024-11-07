@@ -1,0 +1,63 @@
+
+ Package official 
+///////////////////
+a) create or replace package package1 as
+procedure add_new_book( p_isbn VARCHAR2,
+        p_title VARCHAR2,
+        p_authno VARCHAR2,
+        p_currently_available_copies NUMBER,
+        p_publisher VARCHAR2);
+Function increase_due_date( p_reserve_date DATE,
+        p_user_id VARCHAR2) RETURN DATE;
+END package1;
+/
+
+b) CREATE OR REPLACE PACKAGE BODY package1 IS
+    PROCEDURE add_new_book(
+        p_isbn VARCHAR2,
+        p_title VARCHAR2,
+        p_authno VARCHAR2,
+        p_currently_available_copies NUMBER,
+        p_publisher VARCHAR2
+    ) IS
+    BEGIN
+        INSERT INTO books1 
+        VALUES (p_isbn, p_title, p_authno, p_currently_available_copies, p_publisher);
+    END add_new_book;
+
+    FUNCTION increase_due_date(
+        p_reserve_date DATE,
+        p_user_id VARCHAR2
+    ) RETURN DATE IS
+        v_new_due_date DATE;
+    BEGIN
+        UPDATE return
+        SET due_date = due_date + 5
+        WHERE reserve_date = p_reserve_date
+        AND user_id = p_user_id
+        AND due_date IS NOT NULL;
+
+        SELECT due_date INTO v_new_due_date
+        FROM return
+        WHERE reserve_date = p_reserve_date
+        AND user_id = p_user_id;
+
+        RETURN v_new_due_date;
+    END increase_due_date;
+END package1;
+/
+
+c) BEGIN
+     package1.add_new_book('12448', 'Introduction to Databases','A006', 10, 'Pearson');
+ END;
+ /
+
+d)
+declare
+v_new_due_date DATE;
+BEGIN
+v_new_due_date:= package1.increase_due_date('10-AUG-2024','L0006');
+dbms_output.put_line('New due date: '|| v_new_due_date);
+end;
+/
+

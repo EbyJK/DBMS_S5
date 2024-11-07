@@ -1,0 +1,123 @@
+trigger
+
+
+26)
+
+
+create or replace trigger trigger1
+
+before insert or update  on return
+ for each row 
+
+begin
+
+	if :NEW.due_date<sysdate and :NEW.return_date is null then
+ raise application_error(-20001,'TRIGGER!!Due date'||:NEW.due_date||'of'||:NEW.user_id||'exceeds current date'||sysdate);
+end if;
+end;
+/
+
+////////////////////////////////////////////////////
+CREATE OR REPLACE TRIGGER trigger1
+BEFORE INSERT OR UPDATE ON return 
+FOR EACH ROW 
+BEGIN
+    IF :new.due_date < SYSDATE AND :new.return_date IS NULL THEN
+        RAISE_APPLICATION_ERROR(-20001, 'TRIGGER!! Due date ' || 
+            :NEW.due_date || 
+            ' of user ID ' || :new.user_id || 
+            ' exceeds current date ' || TO_CHAR(SYSDATE, 'YYYY-MM-DD'));
+    END IF;
+END;
+/
+///////////////////////////
+update return set due_date='28-AUG-2024' where user_id='L0004';
+///////////////////////////////
+
+
+27)
+
+create or replace trigger trigger2
+before insert or update on return
+for each row
+begin
+ if :new.fine >500 then
+raise_application_error(-20002,'trigger!!fine'||:NEW.fine||'exceeds 500!');
+END iF;
+END;
+/
+//////////////////////
+ update return set fine=600 where user_id='L0001';
+///////////////////////////////
+
+28)
+
+CREATE OR REPLACE TRIGGER trigger3
+BEFORE INSERT OR UPDATE ON "RETURN"
+FOR EACH ROW
+DECLARE 
+    reserve_count NUMBER;
+BEGIN
+    -- Count the number of reserves for the ISBN in the new row
+    SELECT COUNT(*) INTO reserve_count 
+    FROM "RETURN"
+    WHERE isbn = :NEW.ISBN;
+    
+    -- Check if the reserve count is greater than or equal to 2
+    IF reserve_count >= 2 THEN
+        RAISE_APPLICATION_ERROR(-20006, 'Cannot have more than 2 reserves for this ISBN');
+    END IF;
+END;
+/
+
+
+insert into return values(NULL,NULL,NULL,'24-OCT-2024','L0004','56789',100,NULL,NULL);
+////////////////////
+29)
+
+CREATE OR REPLACE TRIGGER trigger4
+BEFORE INSERT OR UPDATE ON "RETURN"
+FOR EACH ROW
+DECLARE 
+    reserve_count NUMBER;
+BEGIN
+    -- Count the number of reserves for the ISBN in the new row
+    SELECT COUNT(*) INTO reserve_count 
+    FROM "RETURN"
+    WHERE user_ID=:new.user_id;
+    
+    -- Check if the reserve count is greater than or equal to 2
+    IF reserve_count >= 3 THEN
+        RAISE_APPLICATION_ERROR(-20007, '1 reader can reserve a maximum of 3 books');
+    END IF;
+END;
+/
+
+
+insert into return values(NULL,NULL,NULL,'24-OCT-2024','L0001','12345',100,NULL,NULL)
+
+30)
+insert into return values(NULL,NULL,NULL,'12-AUG-2024','L0004','16543',100,NULL,NULL);
+
+
+
+CREATE OR REPLACE TRIGGER reserveperday
+BEFORE INSERT ON return
+FOR EACH ROW
+DECLARE
+reservation_exists INT;
+BEGIN
+SELECT COUNT(*)
+INTO reservation_exists
+FROM return
+WHERE USER_ID = :NEW.USER_ID
+AND RESERVE_DATE = :NEW.RESERVE_DATE;
+IF reservation_exists > 0 THEN
+DBMS_OUTPUT.PUT_LINE('User ' || :NEW.USER_ID || ' already has a reservation on ' || :NEW.RESERVE_DATE);
+END IF;
+END;
+/
+
+
+
+
