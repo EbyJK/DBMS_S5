@@ -1,0 +1,206 @@
+
+ update rreaders set fine=0 where USER_ID='L000' AND ISBN=56789;
+ update return set reserve=0 where USER_ID='L0005' AND ISBN=98765;
+update return set reserve=6 where USER_ID='L0005' AND ISBN=16543;
+update return set reserve=3 where USER_ID='L0004' AND ISBN=56789;
+update return set reserve=2 where USER_ID='L0001' AND ISBN=12345;
+update return set reserve=2 where USER_ID='L0001' AND ISBN=56789;
+23)
+
+
+
+DECLARE 
+
+CURSOR fine_cursor IS
+	SELECT user_id,fine from return FOR UPDATE;
+	v_updated_count NUMBER :=0;
+BEGIN
+	for reader_record IN fine_cursor LOOP
+	IF reader_record.fine<10 then
+	update return set fine=100 where CURRENT OF fine_cursor;
+	v_updated_count:=v_updated_count+1;
+	ELSIF reader_record.fine>=10 AND reader_record.fine<15 then
+	update return set fine=150 where CURRENT of fine_cursor;
+	v_updated_count:=v_updated_count+1;
+	ELSIF reader_record.fine>=15 AND reader_record.fine<20 then
+	update return set fine=200 where current of fine_cursor;
+	v_updated_count:=v_updated_count+1;
+	END IF;
+	END LOOP;
+
+	DBMS_OUTPUT.PUT_LINE('Number of records updated:'||v_updated_count);
+	COMMIT;
+	END;
+
+24)
+///
+
+DECLARE 
+	CURSOR book_cursor IS
+	SELECT ISBN FROM return
+	GROUP BY ISBN
+	HAVING RESERVE >3;
+	
+	v_new_due_date DATE;
+	BEGIN
+		FOR book_record IN book_cursor LOOP
+		v_new_due_date:=SYSDATE+15;
+	update return set due_date=v_new_due_date where isbn=book_record.ISBN;
+
+dbms_output.put_line('updated due date for book ISBN:'||book_record.ISBN||'to'|| TO_CHAR(v_new_due_date,'YYYY-MM-DD'));
+END LOOP;
+
+END;
+/
+
+
+
+update readers set fine =56 where user_id='L0001';
+update readers set fine= 950 where user_id='L0002';
+update readers set fine=0 where user_id='L0003';
+update readers set fine =150 where user_id='L0004';
+update readers set fine=155 where user_id='L0005';
+update readers set fine=120 where user_id='L0006';
+
+
+23)
+
+///////////////////////////////////////////////
+SELECT * FROM readers;
+////////////////////////////////////////////////////////
+DECLARE
+
+CURSOR c_readers_fine IS SELECT user_id, fine FROM readers FOR UPDATE; 
+
+new_fine readers.fine%TYPE;
+
+user_id readers.user_id%TYPE;
+
+updated_count NUMBER := 0; 
+
+
+BEGIN
+
+OPEN c_readers_fine;
+
+LOOP
+
+     FETCH c_readers_fine INTO user_id, new_fine; 
+
+     EXIT WHEN c_readers_fine%NOTFOUND;
+
+     IF new_fine < 100 THEN
+
+         new_fine := 100;
+
+     ELSIF new_fine >= 100 AND new_fine < 150 THEN
+
+         new_fine := 150;
+
+     ELSIF new_fine >= 150 AND new_fine < 200 THEN
+
+         new_fine := 200;
+
+     END IF;
+
+
+         UPDATE readers SET fine = new_fine WHERE CURRENT OF c_readers_fine;
+
+     updated_count := updated_count + 1;
+
+END LOOP;
+
+
+CLOSE c_readers_fine; 
+
+DBMS_OUTPUT.PUT_LINE('Number of records updated: ' || updated_count);
+
+END;
+
+/
+///////////////////////////////////////////
+SELECT * FROM readers;
+
+
+
+24)
+
+DECLARE
+
+CURSOR c_3reserve_update IS SELECT isbn FROM return GROUP BY isbn HAVING COUNT(reserve_date) > 3;
+
+current_isbn return.isbn%TYPE;
+
+BEGIN
+
+OPEN c_3reserve_update;
+
+LOOP
+
+FETCH c_3reserve_update INTO current_isbn;
+
+EXIT WHEN c_3reserve_update%NOTFOUND;
+
+UPDATE return SET due_date = issue_date + 15 WHERE isbn = current_isbn;
+
+END LOOP;
+
+CLOSE c_3reserve_update;
+
+END;
+/
+/////////////////
+update return set due_date= issue_date+20;
+
+
+25)
+/////////////////////////////////////////////////////////////////////////
+update books1 set currently_available_copies = 14 where isbn = 56789;
+
+//////////////////////////////////////////////////////////////////////////
+DECLARE
+
+CURSOR c_books_copies IS SELECT currently_available_copies FROM books1 FOR UPDATE; 
+
+new_copies books1.currently_available_copies%TYPE;
+
+
+BEGIN
+
+OPEN c_books_copies;
+
+LOOP
+
+     FETCH c_books_copies INTO new_copies; 
+
+     EXIT WHEN c_books_copies%NOTFOUND;
+
+     IF new_copies < 5 THEN
+
+         new_copies := 8;
+
+     ELSIF new_copies < 10 THEN
+
+         new_copies := 12;
+
+     ELSIF new_copies < 15 THEN
+
+         new_copies := 17;
+
+     END IF;
+
+
+         UPDATE books1 SET currently_available_copies= new_copies WHERE CURRENT OF c_books_copies;
+
+END LOOP;
+
+
+CLOSE c_books_copies; 
+
+END;
+
+
+
+
+
+
