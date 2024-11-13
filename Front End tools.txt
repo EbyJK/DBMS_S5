@@ -1,0 +1,51 @@
+Front End tools
+
+a)     Report on Books table
+
+set pagesize 15;
+
+set linesize 200;
+
+ttitle center ‘Book Report’ skip 1 –
+
+center ‘*******************’ skip 2;
+
+btitle center ‘END OF THE REPORT’;
+
+spool c:\Users\Public\Documents\books_report.txt;
+
+select * from books1;
+
+spool off;
+
+ttitle off;
+
+btitle  off;
+
+ 
+
+ 
+
+b)     Report on reders table with seattle as address
+
+Set pagesize 30;
+
+Set linesize 200;
+
+Ttitle center ‘readers report’ skip 1 –
+
+Center ‘********************’ skip 2;
+
+Btitle center ‘END OF REPORT’;
+
+Spool c:\ Users\Public\Documents\readers_report.txt;
+
+Select * from readers where address=’seattle’;
+
+Spool off;
+
+Ttitle off;
+
+Btitle off;
+
+/
